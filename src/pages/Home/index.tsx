@@ -54,7 +54,7 @@ function DroppableZone({ id, children, horizontal }: { id: string; children: Rea
 
 
 const Home = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const targets = ['A', 'B', 'C', 'D', 'E'];
 
   // Track cards per group explicitly to maintain strict ordering
@@ -74,8 +74,9 @@ const Home = () => {
 
   useEffect(() => {
     const fetchState = async () => {
+      if (!user) return;
       try {
-        const docRef = doc(db, 'app_state', 'main');
+        const docRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(docRef);
 
           if (docSnap.exists()) {
@@ -94,29 +95,29 @@ const Home = () => {
       }
     };
     fetchState();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if (!hasLoaded.current) return;
+    if (!hasLoaded.current || !user) return;
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
     const timeoutId = setTimeout(async () => {
       try {
-        const docRef = doc(db, 'app_state', 'main');
+        const docRef = doc(db, 'users', user.uid);
         await setDoc(docRef, { lists, nextId }, { merge: true });
       } catch (err) {
         console.error("Failed to save state to Firebase", err);
       }
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [lists, nextId]);
+  }, [lists, nextId, user]);
 
   const handleAddCard = () => {
     const newId = String(nextId);
     setNextId(n => n + 1);
-    setLists(prev => ({ ...prev, 'outside': [...prev['outside'], newId] }));
+    setLists(prev => ({ ...prev, 'A': [...prev['A'], newId] }));
   };
 
   const handleDragEvent = (event: any) => {
@@ -211,11 +212,11 @@ const Home = () => {
       </div>
       <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
         {/* Top Pool */}
-        <DroppableZone id="outside" horizontal={true}>
+        {/* <DroppableZone id="outside" horizontal={true}>
           {(lists['outside'] || []).map((cardId, index) => (
             <SortableCard key={cardId} id={cardId} index={index} group="outside" />
           ))}
-        </DroppableZone>
+        </DroppableZone> */}
 
         {/* 3 Droppable lists */}
         <div style={{ display: 'flex', gap: '10px' }}>
