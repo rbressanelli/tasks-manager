@@ -1,4 +1,4 @@
-const AsideBar = () => {
+const SideBar = () => {
     return (
         <aside>
             <ul>
@@ -8,4 +8,4 @@ const AsideBar = () => {
     )
 }
 
-export default AsideBar;
+export default SideBar;

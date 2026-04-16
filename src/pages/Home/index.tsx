@@ -6,7 +6,7 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import AsideBar from '../../components/AsideBar';
+import SideBar from '../../components/SideBar';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -205,7 +205,7 @@ const Home = () => {
         background: '#f4f4f4',
         borderRight: isSidebarOpen ? '1px solid #ccc' : 'none'
       }}>
-        <AsideBar />
+        <SideBar />
       </div>
 
       {/* Main Content Area */}
