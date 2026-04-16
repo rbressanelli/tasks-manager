@@ -58,18 +58,18 @@ function DroppableZone({ id, title, children, horizontal, backgroundColor, heade
         boxSizing: 'border-box',
         marginBottom: '15px'
       }}>
-        <h3 style={{ 
-          margin: 0, 
-          fontSize: '16px', 
-          color: '#fff', 
-          fontWeight: 700, 
+        <h3 style={{
+          margin: 0,
+          fontSize: '16px',
+          color: '#fff',
+          fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '1px'
         }}>
           {title}
         </h3>
       </div>
-      
+
       {/* Container de cards para garantir padding interno */}
       <div style={{
         width: '100%',
@@ -77,7 +77,7 @@ function DroppableZone({ id, title, children, horizontal, backgroundColor, heade
         flexDirection: 'column',
         alignItems: 'center',
         gap: '10px',
-        padding: '0 10px 10px 10px',
+        padding: '0 20px 20px 20px',
         boxSizing: 'border-box'
       }}>
         {children}
@@ -103,10 +103,10 @@ const Home = () => {
 
   // Map of darker colors for headers
   const headerColors: Record<string, string> = {
-    'A': '#42a5f5', 
-    'B': '#66bb6a', 
-    'C': '#fbc02d', 
-    'D': '#ffa726', 
+    'A': '#42a5f5',
+    'B': '#66bb6a',
+    'C': '#fbc02d',
+    'D': '#ffa726',
     'E': '#ab47bc'
   };
 
@@ -141,12 +141,12 @@ const Home = () => {
         const docRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(docRef);
 
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            // Merge loaded data with existing structure to ensure new columns ('D', 'E') are present
-            setLists(prev => ({ ...prev, ...data.lists }));
-            setNextId(data.nextId);
-          } else {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          // Merge loaded data with existing structure to ensure new columns ('D', 'E') are present
+          setLists(prev => ({ ...prev, ...data.lists }));
+          setNextId(data.nextId);
+        } else {
           // Add default config if it doesn't exist
           await setDoc(docRef, { lists, nextId });
         }
@@ -263,45 +263,56 @@ const Home = () => {
         overflow: 'hidden',
         transition: 'width 0.3s ease',
         background: '#f4f4f4',
-        borderRight: isSidebarOpen ? '1px solid #ccc' : 'none'
+        borderRight: isSidebarOpen ? '1px solid #ccc' : 'none',
+        position: 'fixed',
+        zIndex: 1000,
+        height: '100vh',
+        top: 0,
+        left: 0,
       }}>
         <SideBar onAddCard={handleAddCard} />
       </div>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, padding: '20px', transition: 'margin-left 0.3s ease' }}>
-        {/* Top Header/Action Bar */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          marginBottom: '20px',
-          gap: '10px'
-        }}>
-          <button 
-            onClick={toggleSidebar}
-            title="Alternar Sidebar"
-            style={{
-              fontSize: '24px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '5px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            ☰
-          </button>
-        </div>
+      <div style={{ flex: 1, padding: '0 20px 20px 0', transition: 'margin-left 0.3s ease', marginLeft: isSidebarOpen ? '300px' : '0' }}>
+        <div style={{ position: 'fixed', zIndex: 1000,  width: '100%', backgroundColor: 'white',opacity: 0.5, boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'}}>
+
+          {/* Top Header/Action Bar */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            // marginBottom: '20px',
+            gap: '10px',
+
+            padding: '10px',
+            borderRadius: '5px',
+            // boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
+          }}>
+            <button
+              onClick={toggleSidebar}
+              title="Alternar Sidebar"
+              style={{
+                fontSize: '24px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ☰
+            </button>
+          </div></div>
 
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
-          <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '10px' }}>
+          <div style={{ display: 'flex', gap: '15px', overflow: 'auto', padding: '80px 0 0 20px' }}>
             {targets.map((id) => (
-              <DroppableZone 
-                key={id} 
-                id={id} 
+              <DroppableZone
+                key={id}
+                id={id}
                 title={zoneTitles[id]}
                 horizontal={true}
                 backgroundColor={zoneColors[id]}
