@@ -36,11 +36,11 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
             boxSizing: 'border-box',
             position: 'relative'
         }}>
-            {/* Botão Criar Card - 20% abaixo do topo */}
             <div style={{ marginTop: '10%', width: '70%', display: 'flex', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', height: '50px', alignItems: 'center', backgroundColor: '#ee9014ff', color: 'white', borderRadius: '50px' }}>
                 {user?.email}
             </div>
 
+            {/* Botão Criar Card - 20% abaixo do topo */}
             <div style={{ marginTop: '20%', width: '100%', display: 'flex', justifyContent: 'center' }}>
                 <button
                     onClick={onAddCard}

@@ -7,6 +7,7 @@ import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import SideBar from '../../components/SideBar';
+import Header from '../../components/Header';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -37,9 +38,8 @@ function DroppableZone({ id, title, children, horizontal, backgroundColor, heade
   return (
     <div
       ref={ref}
-      className={`border border-[#ccc] flex flex-col items-center box-border rounded-[12px] transition-colors duration-300 ease-in-out overflow-hidden ${
-        horizontal ? 'w-full min-h-[80vh] flex-wrap' : 'w-[300px] min-h-[300px] flex-nowrap'
-      }`}
+      className={`border border-[#ccc] flex flex-col items-center box-border rounded-[12px] transition-colors duration-300 ease-in-out overflow-hidden ${horizontal ? 'w-full min-h-[80vh] flex-wrap' : 'w-[300px] min-h-[300px] flex-nowrap'
+        }`}
       style={{ backgroundColor: backgroundColor || 'transparent' }}
     >
       {/* Header da Coluna */}
@@ -233,31 +233,19 @@ const Home = () => {
     <div className="flex min-h-screen w-full">
       {/* Sidebar */}
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#f4f4f4] fixed z-[1000] h-screen top-0 left-0 ${
-          isSidebarOpen ? 'w-[300px] border-r border-[#ccc]' : 'w-0 border-none'
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#f4f4f4] fixed z-[1000] h-screen top-0 left-0 ${isSidebarOpen ? 'w-[300px] border-r border-[#ccc]' : 'w-0 border-none'
+          }`}
       >
         <SideBar onAddCard={handleAddCard} />
       </div>
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 pr-[20px] pb-[20px] pt-0 transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? 'ml-[300px]' : 'ml-0'
-        }`}
+        className={`flex-1 pr-[20px] pb-[20px] pt-0 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-[300px]' : 'ml-0'
+          }`}
       >
-        <div className="fixed z-[1000] w-full bg-white opacity-50 shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
-          {/* Top Header/Action Bar */}
-          <div className="flex items-center gap-[10px] p-[10px] rounded-[5px]">
-            <button
-              onClick={toggleSidebar}
-              title="Alternar Sidebar"
-              className="text-[24px] bg-transparent border-none cursor-pointer p-[5px] flex items-center justify-center"
-            >
-              ☰
-            </button>
-          </div>
-        </div>
+        {/* Top Header/Action Bar */}
+        <Header toggleSidebar={toggleSidebar} />
 
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
