@@ -28,7 +28,7 @@ function SortableCard({ id, index, group }: { id: string; index: number; group: 
   );
 }
 
-function DroppableZone({ id, children, horizontal }: { id: string; children: React.ReactNode, horizontal?: boolean }) {
+function DroppableZone({ id, title, children, horizontal, backgroundColor, headerColor }: { id: string; title: string, children: React.ReactNode, horizontal?: boolean, backgroundColor?: string, headerColor?: string }) {
   // Makes the container react to drops so you can drop back into empty areas
   const { ref } = useDroppable({
     id,
@@ -38,17 +38,50 @@ function DroppableZone({ id, children, horizontal }: { id: string; children: Rea
     <div ref={ref} style={{
       width: horizontal ? '100%' : 300,
       minHeight: horizontal ? '80vh' : 300,
-      border: horizontal ? '2px dashed #ccc' : '2px solid #ccc',
+      border: '1px solid #ccc',
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
-      padding: '10px',
       alignItems: 'center',
       boxSizing: 'border-box',
-      // marginBottom: horizontal ? '40px' : '0',
-      flexWrap: horizontal ? 'wrap' : 'nowrap'
+      flexWrap: horizontal ? 'wrap' : 'nowrap',
+      backgroundColor: backgroundColor || 'transparent',
+      borderRadius: '12px',
+      transition: 'background-color 0.3s ease',
+      overflow: 'hidden' // Ensure header corners are rounded as well
     }}>
-      {children}
+      {/* Header da Coluna */}
+      <div style={{
+        width: '100%',
+        backgroundColor: headerColor || '#ccc',
+        padding: '12px',
+        textAlign: 'center',
+        boxSizing: 'border-box',
+        marginBottom: '15px'
+      }}>
+        <h3 style={{ 
+          margin: 0, 
+          fontSize: '16px', 
+          color: '#fff', 
+          fontWeight: 700, 
+          textTransform: 'uppercase',
+          letterSpacing: '1px'
+        }}>
+          {title}
+        </h3>
+      </div>
+      
+      {/* Container de cards para garantir padding interno */}
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '0 10px 10px 10px',
+        boxSizing: 'border-box'
+      }}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -58,6 +91,33 @@ const Home = () => {
   const { logout, user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const targets = ['A', 'B', 'C', 'D', 'E'];
+
+  // Map of specific pastel colors for each target
+  const zoneColors: Record<string, string> = {
+    'A': '#e3f2fd', // Pastel Blue
+    'B': '#e8f5e9', // Pastel Green
+    'C': '#fff9c4', // Pastel Gold/Yellow
+    'D': '#fff3e0', // Pastel Orange
+    'E': '#f3e5f5'  // Pastel Violet
+  };
+
+  // Map of darker colors for headers
+  const headerColors: Record<string, string> = {
+    'A': '#42a5f5', 
+    'B': '#66bb6a', 
+    'C': '#fbc02d', 
+    'D': '#ffa726', 
+    'E': '#ab47bc'
+  };
+
+  // Custom titles for each column
+  const zoneTitles: Record<string, string> = {
+    'A': 'Backlog',
+    'B': 'To Do',
+    'C': 'In Progress',
+    'D': 'Review',
+    'E': 'Done'
+  };
 
   // Track cards per group explicitly to maintain strict ordering
   // 'outside' is the top pool area
@@ -237,9 +297,16 @@ const Home = () => {
 
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
-          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', gap: '15px', overflowX: 'auto', padding: '10px' }}>
             {targets.map((id) => (
-              <DroppableZone key={id} id={id} horizontal={true}>
+              <DroppableZone 
+                key={id} 
+                id={id} 
+                title={zoneTitles[id]}
+                horizontal={true}
+                backgroundColor={zoneColors[id]}
+                headerColor={headerColors[id]}
+              >
                 {(lists[id] || []).map((cardId, index) => (
                   <SortableCard key={cardId} id={cardId} index={index} group={id} />
                 ))}
