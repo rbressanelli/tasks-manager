@@ -35,51 +35,25 @@ function DroppableZone({ id, title, children, horizontal, backgroundColor, heade
   });
 
   return (
-    <div ref={ref} style={{
-      width: horizontal ? '100%' : 300,
-      minHeight: horizontal ? '80vh' : 300,
-      border: '1px solid #ccc',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      boxSizing: 'border-box',
-      flexWrap: horizontal ? 'wrap' : 'nowrap',
-      backgroundColor: backgroundColor || 'transparent',
-      borderRadius: '12px',
-      transition: 'background-color 0.3s ease',
-      overflow: 'hidden' // Ensure header corners are rounded as well
-    }}>
+    <div
+      ref={ref}
+      className={`border border-[#ccc] flex flex-col items-center box-border rounded-[12px] transition-colors duration-300 ease-in-out overflow-hidden ${
+        horizontal ? 'w-full min-h-[80vh] flex-wrap' : 'w-[300px] min-h-[300px] flex-nowrap'
+      }`}
+      style={{ backgroundColor: backgroundColor || 'transparent' }}
+    >
       {/* Header da Coluna */}
-      <div style={{
-        width: '100%',
-        backgroundColor: headerColor || '#ccc',
-        padding: '12px',
-        textAlign: 'center',
-        boxSizing: 'border-box',
-        marginBottom: '15px'
-      }}>
-        <h3 style={{
-          margin: 0,
-          fontSize: '16px',
-          color: '#fff',
-          fontWeight: 700,
-          textTransform: 'uppercase',
-          letterSpacing: '1px'
-        }}>
+      <div
+        className="w-full p-[12px] text-center box-border mb-[15px]"
+        style={{ backgroundColor: headerColor || '#ccc' }}
+      >
+        <h3 className="m-0 text-[16px] text-white font-bold uppercase tracking-[1px]">
           {title}
         </h3>
       </div>
 
       {/* Container de cards para garantir padding interno */}
-      <div style={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '10px',
-        padding: '0 20px 20px 20px',
-        boxSizing: 'border-box'
-      }}>
+      <div className="w-full flex flex-col items-center gap-[10px] px-[20px] pb-[20px] pt-0 box-border">
         {children}
       </div>
     </div>
@@ -256,59 +230,38 @@ const Home = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
+    <div className="flex min-h-screen w-full">
       {/* Sidebar */}
-      <div style={{
-        width: isSidebarOpen ? '300px' : '0',
-        overflow: 'hidden',
-        transition: 'width 0.3s ease',
-        background: '#f4f4f4',
-        borderRight: isSidebarOpen ? '1px solid #ccc' : 'none',
-        position: 'fixed',
-        zIndex: 1000,
-        height: '100vh',
-        top: 0,
-        left: 0,
-      }}>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#f4f4f4] fixed z-[1000] h-screen top-0 left-0 ${
+          isSidebarOpen ? 'w-[300px] border-r border-[#ccc]' : 'w-0 border-none'
+        }`}
+      >
         <SideBar onAddCard={handleAddCard} />
       </div>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, padding: '0 20px 20px 0', transition: 'margin-left 0.3s ease', marginLeft: isSidebarOpen ? '300px' : '0' }}>
-        <div style={{ position: 'fixed', zIndex: 1000,  width: '100%', backgroundColor: 'white',opacity: 0.5, boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'}}>
-
+      <div
+        className={`flex-1 pr-[20px] pb-[20px] pt-0 transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? 'ml-[300px]' : 'ml-0'
+        }`}
+      >
+        <div className="fixed z-[1000] w-full bg-white opacity-50 shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
           {/* Top Header/Action Bar */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            // marginBottom: '20px',
-            gap: '10px',
-
-            padding: '10px',
-            borderRadius: '5px',
-            // boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div className="flex items-center gap-[10px] p-[10px] rounded-[5px]">
             <button
               onClick={toggleSidebar}
               title="Alternar Sidebar"
-              style={{
-                fontSize: '24px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '5px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+              className="text-[24px] bg-transparent border-none cursor-pointer p-[5px] flex items-center justify-center"
             >
               ☰
             </button>
-          </div></div>
+          </div>
+        </div>
 
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
-          <div style={{ display: 'flex', gap: '15px', overflow: 'auto', padding: '80px 0 0 20px' }}>
+          <div className="flex gap-[15px] overflow-auto pt-[80px] pb-0 pr-0 pl-[20px]">
             {targets.map((id) => (
               <DroppableZone
                 key={id}
@@ -327,7 +280,7 @@ const Home = () => {
         </DragDropProvider>
       </div>
     </div>
-  )
+  );
 };
 class ErrorBoundary extends React.Component<any, any> {
   constructor(props: any) {
