@@ -6,6 +6,7 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
+import AsideBar from '../../components/AsideBar';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -55,6 +56,7 @@ function DroppableZone({ id, children, horizontal }: { id: string; children: Rea
 
 const Home = () => {
   const { logout, user } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const targets = ['A', 'B', 'C', 'D', 'E'];
 
   // Track cards per group explicitly to maintain strict ordering
@@ -191,45 +193,81 @@ const Home = () => {
     });
   };
 
-  return (
-    <>
-      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <button onClick={handleAddCard} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', borderRadius: '8px', border: '1px solid #ccc' }}>Criar novo card</button>
-        <button type='button'
-          onClick={logout}
-          style={{
-            // background: 'transparent',
-            border: '1px solid var(--border)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem 1rem'
-          }}
-        >
-          {/* <LogOut size={18} /> */}
-          <span>Sair</span>
-        </button>
-      </div>
-      <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
-        {/* Top Pool */}
-        {/* <DroppableZone id="outside" horizontal={true}>
-          {(lists['outside'] || []).map((cardId, index) => (
-            <SortableCard key={cardId} id={cardId} index={index} group="outside" />
-          ))}
-        </DroppableZone> */}
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-        {/* 3 Droppable lists */}
-        <div style={{ display: 'flex', gap: '10px' }}>
-          {targets.map((id) => (
-            <DroppableZone key={id} id={id}>
-              {(lists[id] || []).map((cardId, index) => (
-                <SortableCard key={cardId} id={cardId} index={index} group={id} />
-              ))}
-            </DroppableZone>
-          ))}
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
+      {/* Sidebar */}
+      <div style={{
+        width: isSidebarOpen ? '300px' : '0',
+        overflow: 'hidden',
+        transition: 'width 0.3s ease',
+        background: '#f4f4f4',
+        borderRight: isSidebarOpen ? '1px solid #ccc' : 'none'
+      }}>
+        <AsideBar />
+      </div>
+
+      {/* Main Content Area */}
+      <div style={{ flex: 1, padding: '20px', transition: 'margin-left 0.3s ease' }}>
+        {/* Top Header/Action Bar */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          marginBottom: '20px',
+          gap: '10px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <button 
+              onClick={toggleSidebar}
+              title="Alternar Sidebar"
+              style={{
+                fontSize: '24px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ☰
+            </button>
+            <button onClick={handleAddCard} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', borderRadius: '8px', border: '1px solid #ccc' }}>Criar novo card</button>
+          </div>
+          
+          <button type='button'
+            onClick={logout}
+            style={{
+              border: '1px solid var(--border)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            <span>Sair</span>
+          </button>
         </div>
-      </DragDropProvider>
-    </>
+
+        <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
+          {/* 5 Droppable lists */}
+          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '20px' }}>
+            {targets.map((id) => (
+              <DroppableZone key={id} id={id}>
+                {(lists[id] || []).map((cardId, index) => (
+                  <SortableCard key={cardId} id={cardId} index={index} group={id} />
+                ))}
+              </DroppableZone>
+            ))}
+          </div>
+        </DragDropProvider>
+      </div>
+    </div>
   )
 };
 class ErrorBoundary extends React.Component<any, any> {
