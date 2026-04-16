@@ -88,7 +88,7 @@ function DroppableZone({ id, title, children, horizontal, backgroundColor, heade
 
 
 const Home = () => {
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const targets = ['A', 'B', 'C', 'D', 'E'];
 
