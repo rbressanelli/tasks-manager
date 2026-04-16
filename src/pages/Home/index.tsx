@@ -24,7 +24,7 @@ function SortableCard({ id, index, group }: { id: string; index: number; group: 
   });
 
   return (
-    <Card ref={ref}>Card {id}</Card>
+    <Card ref={ref}>Card {group}</Card>
   );
 }
 
@@ -37,15 +37,15 @@ function DroppableZone({ id, children, horizontal }: { id: string; children: Rea
   return (
     <div ref={ref} style={{
       width: horizontal ? '100%' : 300,
-      minHeight: horizontal ? 140 : 300,
+      minHeight: horizontal ? '80vh' : 300,
       border: horizontal ? '2px dashed #ccc' : '2px solid #ccc',
       display: 'flex',
-      flexDirection: horizontal ? 'row' : 'column',
+      flexDirection: 'column',
       gap: '10px',
       padding: '10px',
       alignItems: 'center',
       boxSizing: 'border-box',
-      marginBottom: horizontal ? '40px' : '0',
+      // marginBottom: horizontal ? '40px' : '0',
       flexWrap: horizontal ? 'wrap' : 'nowrap'
     }}>
       {children}
@@ -205,7 +205,7 @@ const Home = () => {
         background: '#f4f4f4',
         borderRight: isSidebarOpen ? '1px solid #ccc' : 'none'
       }}>
-        <SideBar />
+        <SideBar onAddCard={handleAddCard} />
       </div>
 
       {/* Main Content Area */}
@@ -214,51 +214,32 @@ const Home = () => {
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          justifyContent: 'space-between', 
           marginBottom: '20px',
           gap: '10px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <button 
-              onClick={toggleSidebar}
-              title="Alternar Sidebar"
-              style={{
-                fontSize: '24px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '5px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              ☰
-            </button>
-            <button onClick={handleAddCard} style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', borderRadius: '8px', border: '1px solid #ccc' }}>Criar novo card</button>
-          </div>
-          
-          <button type='button'
-            onClick={logout}
+          <button 
+            onClick={toggleSidebar}
+            title="Alternar Sidebar"
             style={{
-              border: '1px solid var(--border)',
+              fontSize: '24px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '5px',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1rem',
-              borderRadius: '8px',
-              cursor: 'pointer'
+              justifyContent: 'center'
             }}
           >
-            <span>Sair</span>
+            ☰
           </button>
         </div>
 
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
-          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '10px', overflowX: 'auto' }}>
             {targets.map((id) => (
-              <DroppableZone key={id} id={id}>
+              <DroppableZone key={id} id={id} horizontal={true}>
                 {(lists[id] || []).map((cardId, index) => (
                   <SortableCard key={cardId} id={cardId} index={index} group={id} />
                 ))}
