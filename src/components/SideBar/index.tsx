@@ -6,7 +6,7 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const [dateTime, setDateTime] = useState(new Date());
 
     useEffect(() => {
@@ -37,8 +37,12 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
             position: 'relative'
         }}>
             {/* Botão Criar Card - 20% abaixo do topo */}
+            <div style={{ marginTop: '10%', width: '70%', display: 'flex', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', height: '50px', alignItems: 'center', backgroundColor: '#ee9014ff', color: 'white', borderRadius: '50px' }}>
+                {user?.email}
+            </div>
+
             <div style={{ marginTop: '20%', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                <button 
+                <button
                     onClick={onAddCard}
                     style={{
                         width: '70%',
@@ -63,16 +67,16 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
 
             {/* Seção Inferior: Data e Logout */}
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px', gap: '15px' }}>
-                <div style={{ 
-                    fontSize: '14px', 
-                    color: '#586064', 
-                    fontWeight: '500', 
-                    fontFamily: 'Inter, sans-serif' 
+                <div style={{
+                    fontSize: '14px',
+                    color: '#586064',
+                    fontWeight: '500',
+                    fontFamily: 'Inter, sans-serif'
                 }}>
                     {formatDate(dateTime)}
                 </div>
 
-                <button 
+                <button
                     onClick={logout}
                     style={{
                         width: '70%',
