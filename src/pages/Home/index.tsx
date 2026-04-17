@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type SetStateAction, type Dispatch } from 'react';
 import React from 'react';
 import Card from '../../components/Card';
 import { DragDropProvider, useDroppable } from '@dnd-kit/react';
@@ -8,6 +8,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import SideBar from '../../components/SideBar';
 import Header from '../../components/Header';
+import ModalCard from '../../components/ModalCard';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -15,8 +16,13 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
   newArray.splice(to < 0 ? newArray.length + to : to, 0, newArray.splice(from, 1)[0]);
   return newArray;
 }
-
-function SortableCard({ id, index, group }: { id: string; index: number; group: string }) {
+function SortableCard({ id, index, group, modal, onDelete }: { 
+  id: string; 
+  index: number; 
+  group: string, 
+  modal: Dispatch<SetStateAction<boolean>>,
+  onDelete: (id: string) => void 
+}) {
   // Configures the card as a sortable element
   const { ref } = useSortable({
     id,
@@ -25,7 +31,13 @@ function SortableCard({ id, index, group }: { id: string; index: number; group: 
   });
 
   return (
-    <Card ref={ref}>Card {group}</Card>
+    <Card 
+        ref={ref} 
+        onOpenModal={() => modal(true)}
+        onOpenDeleteModal={() => onDelete(id)}
+    >
+        Card {group}
+    </Card>
   );
 }
 
@@ -104,6 +116,9 @@ const Home = () => {
     'E': []
   });
   const [nextId, setNextId] = useState(2);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState<string | null>(null);
 
   const isInitialMount = useRef(true);
   const hasLoaded = useRef(false);
@@ -154,6 +169,26 @@ const Home = () => {
     const newId = String(nextId);
     setNextId(n => n + 1);
     setLists(prev => ({ ...prev, 'A': [...prev['A'], newId] }));
+  };
+
+  const handleOpenDeleteModal = (id: string) => {
+    setCardToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!cardToDelete) return;
+
+    setLists(prev => {
+      const newLists = { ...prev };
+      for (const group in newLists) {
+        newLists[group] = newLists[group].filter(id => id !== cardToDelete);
+      }
+      return newLists;
+    });
+
+    setIsDeleteModalOpen(false);
+    setCardToDelete(null);
   };
 
   const handleDragEvent = (event: any) => {
@@ -247,6 +282,38 @@ const Home = () => {
         {/* Top Header/Action Bar */}
         <Header toggleSidebar={toggleSidebar} />
 
+        <ModalCard isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Nova Tarefa" />
+
+        <ModalCard 
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          title="Confirmar Exclusão"
+          footer={
+            <>
+              <button 
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-6 py-2 rounded-full border border-outline text-primary font-label hover:bg-primary/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleConfirmDelete}
+                className="px-6 py-2 rounded-full bg-error text-on-error font-label hover:shadow-lg transition-all"
+              >
+                Excluir
+              </button>
+            </>
+          }
+        >
+          <div className="py-2">
+            <p className="text-on-surface-variant font-body">
+              Você tem certeza que deseja excluir esta tarefa? Esta ação não pode ser desfeita.
+            </p>
+          </div>
+        </ModalCard>
+
         <DragDropProvider onDragOver={handleDragEvent} onDragEnd={handleDragEvent}>
           {/* 5 Droppable lists */}
           <div className="flex gap-[15px] overflow-auto pt-[80px] pb-0 pr-0 pl-[20px]">
@@ -260,7 +327,14 @@ const Home = () => {
                 headerColor={headerColors[id]}
               >
                 {(lists[id] || []).map((cardId, index) => (
-                  <SortableCard key={cardId} id={cardId} index={index} group={id} />
+                  <SortableCard 
+                    key={cardId} 
+                    id={cardId} 
+                    index={index} 
+                    group={id} 
+                    modal={setIsModalOpen}
+                    onDelete={handleOpenDeleteModal}
+                  />
                 ))}
               </DroppableZone>
             ))}
