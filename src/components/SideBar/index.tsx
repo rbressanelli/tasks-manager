@@ -36,8 +36,8 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
             boxSizing: 'border-box',
             position: 'relative'
         }}>
-            <div style={{ marginTop: '10%', width: '70%', display: 'flex', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', height: '50px', alignItems: 'center', backgroundColor: '#ee9014ff', color: 'white', borderRadius: '50px' }}>
-                {user?.email}
+            <div style={{ marginTop: '10%', width: '70%', display: 'flex', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', height: '50px', alignItems: 'center', backgroundColor: '#ee9014ff', borderRadius: '50px' }}>
+                <p className="text-center text-white truncate w-50">{user?.email}</p>
             </div>
 
             {/* Botão Criar Card - 20% abaixo do topo */}
@@ -58,7 +58,7 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
                         transition: 'transform 0.1s active'
                     }}
                 >
-                    Criar card
+                    Criar Tarefa
                 </button>
             </div>
 
