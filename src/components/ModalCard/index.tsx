@@ -25,7 +25,7 @@ const ModalCard = ({ isOpen, onClose, title, children, footer }: ModalCardProps)
                         onClick={onClose}
                         className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant"
                     >
-                        <span className="material-symbols-outlined">close</span>
+                        <span className="material-symbols-outlined cursor-pointer">close</span>
                     </button>
                 </div>
 

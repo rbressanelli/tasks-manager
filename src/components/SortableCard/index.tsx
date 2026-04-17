@@ -40,7 +40,7 @@ export function SortableCard({ id, index, group, modal, onDelete, data }: {
       </p>
       <div className="flex flex-col gap-1">
         <h4 className="font-headline font-bold text-primary text-sm truncate">{data?.title || 'Sem título'}</h4>
-        <p className="text-xs text-on-surface-variant line-clamp-2">{data?.description || ''}</p>
+        <p className="text-xs text-on-surface-variant  break-all w-[210px]">{data?.description || ''}</p>
       </div>
     </div>
   );
