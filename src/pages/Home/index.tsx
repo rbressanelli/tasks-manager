@@ -9,6 +9,8 @@ import { useAuth } from '../../context/AuthContext';
 import SideBar from '../../components/SideBar';
 import Header from '../../components/Header';
 import ModalCard from '../../components/ModalCard';
+import CardForm from '../../components/CardForm';
+import type { CardMetadata } from '../../types/card';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
@@ -16,12 +18,13 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
   newArray.splice(to < 0 ? newArray.length + to : to, 0, newArray.splice(from, 1)[0]);
   return newArray;
 }
-function SortableCard({ id, index, group, modal, onDelete }: { 
+function SortableCard({ id, index, group, modal, onDelete, data }: { 
   id: string; 
   index: number; 
   group: string, 
-  modal: Dispatch<SetStateAction<boolean>>,
-  onDelete: (id: string) => void 
+  modal: (id: string) => void,
+  onDelete: (id: string) => void,
+  data?: CardMetadata
 }) {
   // Configures the card as a sortable element
   const { ref } = useSortable({
@@ -33,10 +36,13 @@ function SortableCard({ id, index, group, modal, onDelete }: {
   return (
     <Card 
         ref={ref} 
-        onOpenModal={() => modal(true)}
+        onOpenModal={() => modal(id)}
         onOpenDeleteModal={() => onDelete(id)}
     >
-        Card {group}
+        <div className="flex flex-col gap-1">
+            <h4 className="font-headline font-bold text-primary text-sm truncate">{data?.title || 'Sem título'}</h4>
+            <p className="text-xs text-on-surface-variant line-clamp-2">{data?.description || ''}</p>
+        </div>
     </Card>
   );
 }
@@ -119,6 +125,10 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<string | null>(null);
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const [cardsMetadata, setCardsMetadata] = useState<Record<string, CardMetadata>>({
+    '1': { title: 'Nova Tarefa', description: 'Clique em editar para adicionar uma descrição' }
+  });
 
   const isInitialMount = useRef(true);
   const hasLoaded = useRef(false);
@@ -134,6 +144,7 @@ const Home = () => {
           const data = docSnap.data();
           // Merge loaded data with existing structure to ensure new columns ('D', 'E') are present
           setLists(prev => ({ ...prev, ...data.lists }));
+          setCardsMetadata(data.cardsMetadata || {});
           setNextId(data.nextId);
         } else {
           // Add default config if it doesn't exist
@@ -157,18 +168,22 @@ const Home = () => {
     const timeoutId = setTimeout(async () => {
       try {
         const docRef = doc(db, 'users', user.uid);
-        await setDoc(docRef, { lists, nextId }, { merge: true });
+        await setDoc(docRef, { lists, nextId, cardsMetadata }, { merge: true });
       } catch (err) {
         console.error("Failed to save state to Firebase", err);
       }
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [lists, nextId, user]);
+  }, [lists, nextId, cardsMetadata, user]);
 
   const handleAddCard = () => {
     const newId = String(nextId);
     setNextId(n => n + 1);
     setLists(prev => ({ ...prev, 'A': [...prev['A'], newId] }));
+    setCardsMetadata(prev => ({
+      ...prev,
+      [newId]: { title: 'Nova Tarefa', description: '' }
+    }));
   };
 
   const handleOpenDeleteModal = (id: string) => {
@@ -185,6 +200,12 @@ const Home = () => {
         newLists[group] = newLists[group].filter(id => id !== cardToDelete);
       }
       return newLists;
+    });
+
+    setCardsMetadata(prev => {
+        const newMetadata = { ...prev };
+        delete newMetadata[cardToDelete];
+        return newMetadata;
     });
 
     setIsDeleteModalOpen(false);
@@ -283,8 +304,30 @@ const Home = () => {
         <Header toggleSidebar={toggleSidebar} />
 
         <ModalCard isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Nova Tarefa" />
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingCardId(null);
+          }}
+          title={editingCardId ? "Editar Tarefa" : "Nova Tarefa"}
+        >
+            <CardForm 
+                initialValues={editingCardId ? cardsMetadata[editingCardId] : undefined}
+                onCancel={() => {
+                    setIsModalOpen(false);
+                    setEditingCardId(null);
+                }}
+                onSubmit={(data) => {
+                    if (editingCardId) {
+                        setCardsMetadata(prev => ({
+                            ...prev,
+                            [editingCardId]: data
+                        }));
+                    }
+                    setIsModalOpen(false);
+                    setEditingCardId(null);
+                }}
+            />
+        </ModalCard>
 
         <ModalCard 
           isOpen={isDeleteModalOpen}
@@ -332,8 +375,12 @@ const Home = () => {
                     id={cardId} 
                     index={index} 
                     group={id} 
-                    modal={setIsModalOpen}
+                    modal={(id) => {
+                        setEditingCardId(id);
+                        setIsModalOpen(true);
+                    }}
                     onDelete={handleOpenDeleteModal}
+                    data={cardsMetadata[cardId]}
                   />
                 ))}
               </DroppableZone>

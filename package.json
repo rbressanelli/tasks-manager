@@ -15,6 +15,7 @@
     "@dnd-kit/dom": "^0.4.0",
     "@dnd-kit/helpers": "^0.4.0",
     "@dnd-kit/react": "^0.4.0",
+    "@hookform/resolvers": "^5.2.2",
     "firebase": "^12.12.0",
     "konva": "^10.2.5",
     "react": "^19.2.4",
