@@ -18,10 +18,10 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
   newArray.splice(to < 0 ? newArray.length + to : to, 0, newArray.splice(from, 1)[0]);
   return newArray;
 }
-function SortableCard({ id, index, group, modal, onDelete, data }: { 
-  id: string; 
-  index: number; 
-  group: string, 
+function SortableCard({ id, index, group, modal, onDelete, data }: {
+  id: string;
+  index: number;
+  group: string,
   modal: (id: string) => void,
   onDelete: (id: string) => void,
   data?: CardMetadata
@@ -34,10 +34,10 @@ function SortableCard({ id, index, group, modal, onDelete, data }: {
   });
 
   return (
-    <Card 
-        ref={ref} 
-        onOpenModal={() => modal(id)}
-        onOpenDeleteModal={() => onDelete(id)}
+    <Card
+      ref={ref}
+      onOpenModal={() => modal(id)}
+      onOpenDeleteModal={() => onDelete(id)}
     >
         <div className="flex flex-col gap-1">
             <h4 className="font-headline font-bold text-primary text-sm truncate">{data?.title || 'Sem título'}</h4>
@@ -203,9 +203,9 @@ const Home = () => {
     });
 
     setCardsMetadata(prev => {
-        const newMetadata = { ...prev };
-        delete newMetadata[cardToDelete];
-        return newMetadata;
+      const newMetadata = { ...prev };
+      delete newMetadata[cardToDelete];
+      return newMetadata;
     });
 
     setIsDeleteModalOpen(false);
@@ -310,38 +310,38 @@ const Home = () => {
           }}
           title={editingCardId ? "Editar Tarefa" : "Nova Tarefa"}
         >
-            <CardForm 
-                initialValues={editingCardId ? cardsMetadata[editingCardId] : undefined}
-                onCancel={() => {
-                    setIsModalOpen(false);
-                    setEditingCardId(null);
-                }}
-                onSubmit={(data) => {
-                    if (editingCardId) {
-                        setCardsMetadata(prev => ({
-                            ...prev,
-                            [editingCardId]: data
-                        }));
-                    }
-                    setIsModalOpen(false);
-                    setEditingCardId(null);
-                }}
-            />
+          <CardForm
+            initialValues={editingCardId ? cardsMetadata[editingCardId] : undefined}
+            onCancel={() => {
+              setIsModalOpen(false);
+              setEditingCardId(null);
+            }}
+            onSubmit={(data) => {
+              if (editingCardId) {
+                setCardsMetadata(prev => ({
+                  ...prev,
+                  [editingCardId]: data
+                }));
+              }
+              setIsModalOpen(false);
+              setEditingCardId(null);
+            }}
+          />
         </ModalCard>
 
-        <ModalCard 
+        <ModalCard
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           title="Confirmar Exclusão"
           footer={
             <>
-              <button 
+              <button
                 onClick={() => setIsDeleteModalOpen(false)}
                 className="px-6 py-2 rounded-full border border-outline text-primary font-label hover:bg-primary/5 transition-colors"
               >
                 Cancelar
               </button>
-              <button 
+              <button
                 onClick={handleConfirmDelete}
                 className="px-6 py-2 rounded-full bg-error text-on-error font-label hover:shadow-lg transition-all"
               >
@@ -370,14 +370,14 @@ const Home = () => {
                 headerColor={headerColors[id]}
               >
                 {(lists[id] || []).map((cardId, index) => (
-                  <SortableCard 
-                    key={cardId} 
-                    id={cardId} 
-                    index={index} 
-                    group={id} 
+                  <SortableCard
+                    key={cardId}
+                    id={cardId}
+                    index={index}
+                    group={id}
                     modal={(id) => {
-                        setEditingCardId(id);
-                        setIsModalOpen(true);
+                      setEditingCardId(id);
+                      setIsModalOpen(true);
                     }}
                     onDelete={handleOpenDeleteModal}
                     data={cardsMetadata[cardId]}
