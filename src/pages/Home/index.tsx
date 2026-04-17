@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
-import Card from '../../components/Card';
 import { DragDropProvider, useDroppable } from '@dnd-kit/react';
-import { useSortable } from '@dnd-kit/react/sortable';
 import { db } from '../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
@@ -11,40 +9,13 @@ import Header from '../../components/Header';
 import ModalCard from '../../components/ModalCard';
 import CardForm from '../../components/CardForm';
 import type { CardMetadata } from '../../types/card';
+import { SortableCard } from '../../components/SortableCard';
 
 // Helper to move items within the same array
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
   const newArray = array.slice();
   newArray.splice(to < 0 ? newArray.length + to : to, 0, newArray.splice(from, 1)[0]);
   return newArray;
-}
-function SortableCard({ id, index, group, modal, onDelete, data }: {
-  id: string;
-  index: number;
-  group: string,
-  modal: (id: string) => void,
-  onDelete: (id: string) => void,
-  data?: CardMetadata
-}) {
-  // Configures the card as a sortable element
-  const { ref } = useSortable({
-    id,
-    index,
-    group,
-  });
-
-  return (
-    <Card
-      ref={ref}
-      onOpenModal={() => modal(id)}
-      onOpenDeleteModal={() => onDelete(id)}
-    >
-        <div className="flex flex-col gap-1">
-            <h4 className="font-headline font-bold text-primary text-sm truncate">{data?.title || 'Sem título'}</h4>
-            <p className="text-xs text-on-surface-variant line-clamp-2">{data?.description || ''}</p>
-        </div>
-    </Card>
-  );
 }
 
 function DroppableZone({ id, title, children, horizontal, backgroundColor, headerColor }: { id: string; title: string, children: React.ReactNode, horizontal?: boolean, backgroundColor?: string, headerColor?: string }) {
