@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type SetStateAction, type Dispatch } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import Card from '../../components/Card';
 import { DragDropProvider, useDroppable } from '@dnd-kit/react';
