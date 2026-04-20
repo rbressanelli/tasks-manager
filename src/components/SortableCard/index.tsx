@@ -1,6 +1,5 @@
 import { useSortable } from "@dnd-kit/react/sortable";
 import type { CardMetadata } from "../../types/card";
-import styles from "./sortablecard.module.css";
 
 export function SortableCard({ id, index, group, modal, onDelete, data }: {
   id: string;
@@ -18,7 +17,7 @@ export function SortableCard({ id, index, group, modal, onDelete, data }: {
   });
 
   return (
-    <div ref={ref} className={styles.card}
+    <div ref={ref} className="border-2 border-[hsl(231,87%,41%)] cursor-pointer p-[10px] w-full min-h-[100px] bg-white shadow-[2px_2px_10px_rgba(0,0,0,0.6)] transition-all duration-200 ease-in-out relative grid grid-cols-[4fr_1fr] grid-rows-[4fr_1fr]"
     >
       <p
         onClick={(e) => {
