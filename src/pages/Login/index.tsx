@@ -127,7 +127,7 @@ const Login = () => {
                     <input
                       className="w-full px-4 py-4 bg-surface-container-highest border-none rounded-lg focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/40 text-on-surface transition-all placeholder:text-outline outline-none"
                       id="email"
-                      placeholder="nome@corporacao.com"
+                      placeholder="nome@email.com"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
