@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 interface SideBarProps {
     onAddCard: () => void;
 }
 
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
     const { logout, user } = useAuth();
     const [dateTime, setDateTime] = useState(new Date());
+    const [value, onChange] = useState<Value>(new Date());
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -17,22 +24,13 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
         return () => clearInterval(timer);
     }, []);
 
-    const formatDate = (date: Date) => {
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const yyyy = date.getFullYear();
-        const hh = String(date.getHours()).padStart(2, '0');
-        const min = String(date.getMinutes()).padStart(2, '0');
-        return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
-    };
-
     return (
         <aside style={{
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
             alignItems: 'center',
-            padding: '20px 0',
+            padding: '20px 10px',
             boxSizing: 'border-box',
             position: 'relative'
         }}>
@@ -64,6 +62,7 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
 
             {/* Espaçador flexível */}
             <div style={{ flex: 1 }}></div>
+            <Calendar className='mb-20' calendarType='gregory' onChange={onChange} value={value} />
 
             {/* Seção Inferior: Data e Logout */}
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px', gap: '15px' }}>
@@ -73,9 +72,8 @@ const SideBar: React.FC<SideBarProps> = ({ onAddCard }) => {
                     fontWeight: '500',
                     fontFamily: 'Inter, sans-serif'
                 }}>
-                    {formatDate(dateTime)}
+                    {dateTime.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
                 </div>
-
                 <button
                     onClick={logout}
                     style={{
