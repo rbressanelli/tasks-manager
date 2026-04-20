@@ -65,7 +65,7 @@ const CardForm = ({ initialValues, onSubmit, onCancel }: CardFormProps) => {
                         {descriptionValue?.length || 0}/200
                     </span>
                 </div>
-                <textarea
+                <textarea 
                     {...register('description', {
                         onChange: (e) => {
                             if (e.target.value.length > 200) {
@@ -76,7 +76,7 @@ const CardForm = ({ initialValues, onSubmit, onCancel }: CardFormProps) => {
                     placeholder="Dê mais detalhes sobre a tarefa..."
                     className={`w-full px-4 py-2 rounded-xl border ${
                         errors.description ? 'border-error' : 'border-outline'
-                    } focus:ring-2 focus:ring-primary/20 outline-none transition-all min-h-[120px] resize-none`}
+                    } focus:ring-2 focus:ring-primary/20 outline-none transition-all min-h-[120px] resize`}
                 />
                 {errors.description && (
                     <span className="text-xs text-error">{errors.description.message}</span>
