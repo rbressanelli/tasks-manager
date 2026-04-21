@@ -218,7 +218,7 @@ const Login = () => {
                   </div>
                 )}
 
-                {!isRegistering && (
+                {/* {!isRegistering && (
                   <div className="flex items-center justify-between pt-2">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
@@ -236,7 +236,7 @@ const Login = () => {
                       Esqueceu a senha?
                     </button>
                   </div>
-                )}
+                )} */}
 
                 <button
                   className="w-full brushed-steel py-4 rounded-lg text-on-primary font-bold tracking-wide shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
