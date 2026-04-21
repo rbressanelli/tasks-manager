@@ -55,7 +55,7 @@ const Login = () => {
         await createUserWithEmailAndPassword(auth, email, password);
         if (auth.currentUser) {
           await sendEmailVerification(auth.currentUser);
-          setSuccessMessage("Conta criada! Enviamos um link de verificação para seu e-mail. Por favor, valide sua conta antes de entrar.");
+          setSuccessMessage("Conta criada! Um link de verificação foi enviado para seu e-mail. Por favor, valide sua conta antes de entrar.");
           setIsRegistering(false);
           setEmail("");
           setPassword("");
