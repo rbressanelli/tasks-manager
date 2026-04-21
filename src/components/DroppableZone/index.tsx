@@ -9,7 +9,7 @@ export function DroppableZone({ id, title, children, horizontal, backgroundColor
   return (
     <div
       ref={ref}
-      className={`border border-[#ccc] flex flex-col items-center box-border rounded-[12px] transition-colors duration-300 ease-in-out overflow-hidden ${horizontal ? 'w-full min-h-[80vh] flex-wrap' : 'w-[300px] min-h-[300px] flex-nowrap'
+      className={`border border-[#ccc] flex flex-col items-center box-border rounded-[12px] transition-colors duration-300 ease-in-out overflow-hidden ${horizontal ? 'w-full min-w-[300px] min-h-[80vh] flex-wrap' : 'w-[300px] min-h-[300px] flex-nowrap'
         }`}
       style={{ backgroundColor: backgroundColor || 'transparent' }}
     >
