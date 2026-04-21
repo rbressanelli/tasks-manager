@@ -13,9 +13,9 @@ const AppRoutes = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={user ? <Navigate to="/home" replace /> : <Login />} />
-                <Route path="/home" element={user ? <Home /> : <Navigate to="/" replace />} />
-                <Route path="*" element={<Navigate to={user ? "/home" : "/"} replace />} />
+                <Route path="/" element={user && user.emailVerified ? <Navigate to="/home" replace /> : <Login />} />
+                <Route path="/home" element={user && user.emailVerified ? <Home /> : <Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to={user && user.emailVerified ? "/home" : "/"} replace />} />
             </Routes>
         </Router>
     );

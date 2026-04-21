@@ -3,6 +3,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  sendEmailVerification,
+  signOut,
 } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase";
 import { useNavigate } from "react-router-dom";
@@ -33,12 +35,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleAuth = async (e: React.SubmitEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
     if (isRegistering && password !== confirmPassword) {
       return setError("As senhas não coincidem.");
@@ -49,10 +53,25 @@ const Login = () => {
     try {
       if (isRegistering) {
         await createUserWithEmailAndPassword(auth, email, password);
+        if (auth.currentUser) {
+          await sendEmailVerification(auth.currentUser);
+          setSuccessMessage("Conta criada! Enviamos um link de verificação para seu e-mail. Por favor, valide sua conta antes de entrar.");
+          setIsRegistering(false);
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+          await signOut(auth);
+          return setError("Seu e-mail ainda não foi verificado. Por favor, verifique sua caixa de entrada.");
+        }
+
+        navigate("/home");
       }
-      navigate("/home");
     } catch (err: any) {
       setError(
         err.message ||
@@ -65,10 +84,18 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     setError("");
+    setSuccessMessage("");
     setIsLoading(true);
 
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      if (!user.emailVerified) {
+        await signOut(auth);
+        return setError("Seu e-mail do Google ainda não foi verificado. Por favor, verifique sua conta Google antes de continuar.");
+      }
+
       navigate("/home");
     } catch (err: any) {
       setError(err.message || "Falha ao fazer login com o Google.");
@@ -113,6 +140,12 @@ const Login = () => {
               {error && (
                 <div className="mb-6 p-4 bg-error-container text-on-error-container rounded-lg text-sm text-center font-semibold">
                   {error}
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="mb-6 p-4 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-lg text-sm text-center font-semibold animate-in fade-in duration-300">
+                  {successMessage}
                 </div>
               )}
               <form className="space-y-6" onSubmit={handleAuth}>
